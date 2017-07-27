@@ -18,6 +18,31 @@ xxx would be the name of the standard header that you would normally include.
 For additional mutex helper classes, such as std::scoped_guard or std::unique_lock, you need to
 include &lt;mutex&gt; before including mingw.mutex.h
 
+Example at https://github.com/sgieseking/anyrpc/blob/b724d8c4b81bcb3d58c50032598fa30f2859ec4d/include/anyrpc/server.h#L25-L43
+
+```
+#if defined(ANYRPC_THREADING)
+# if defined(__MINGW32__)
+// These constants are not defined for mingw but are needed in the following libraries
+#  ifndef EOWNERDEAD
+#   define EOWNERDEAD       133    /* File too big */
+#  endif
+#  ifndef EPROTO
+#   define EPROTO    134    /* Protocol error */
+#  endif
+
+#  include "internal/mingw.thread.h"
+#  include <mutex>
+#  include "internal/mingw.mutex.h"
+#  include "internal/mingw.condition_variable.h"
+# else
+#  include <thread>
+#  include <condition_variable>
+#  include <mutex>
+# endif //defined(__MINGW32__)
+#endif //defined(ANYRPC_THREADING)
+```
+
 Compatibility
 =============
 
